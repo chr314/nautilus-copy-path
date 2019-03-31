@@ -1,6 +1,6 @@
 # Nautilus Copy Path/Name
 
-![ScreenShot](https://raw.github.com/chr314/nautilus-copy-path/master/screenshot.png)
+![ScreenShot](https://raw.githubusercontent.com/chr314/nautilus-copy-path/master/screenshot.png)
 
 ## Installation
 
