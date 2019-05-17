@@ -23,12 +23,10 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
         item_path = Nautilus.MenuItem(
             name="NautilusCopyPath::CopyPath" + group,
             label=Translation.t("copy_paths") if plural else Translation.t("copy_path"),
-            tip="Copy path to clipboard"
         )
         item_name = Nautilus.MenuItem(
             name="NautilusCopyPath::CopyName" + group,
             label=Translation.t("copy_names") if plural else Translation.t("copy_name"),
-            tip="Copy name to clipboard"
         )
 
         item_path.connect("activate", self._copy_paths, files)
