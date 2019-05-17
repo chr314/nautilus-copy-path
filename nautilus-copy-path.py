@@ -1,4 +1,5 @@
 import os
+from translation import Translation
 from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
 
@@ -21,12 +22,12 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
         plural = len(files) > 1
         item_path = Nautilus.MenuItem(
             name="NautilusCopyPath::CopyPath" + group,
-            label="Copy Path" + ("s" if plural else ""),
+            label=Translation.t("copy_paths") if plural else Translation.t("copy_path"),
             tip="Copy path to clipboard"
         )
         item_name = Nautilus.MenuItem(
             name="NautilusCopyPath::CopyName" + group,
-            label="Copy Name" + ("s" if plural else ""),
+            label=Translation.t("copy_names") if plural else Translation.t("copy_name"),
             tip="Copy name to clipboard"
         )
 
