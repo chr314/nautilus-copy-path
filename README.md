@@ -18,7 +18,7 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
 
 3. `make install`
 
-4. Restart the Nautilus
+4. Restart the Nautilus (`nautilus -q`)
 
 
 ## Add new translations
