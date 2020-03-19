@@ -4,6 +4,9 @@
 
 ## Installation
 
+###  [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
+
+### Manual
 #### Install Dependencies
 
 Fedora `sudo dnf install nautilus-python python3-gobject`
