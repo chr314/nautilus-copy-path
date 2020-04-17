@@ -4,9 +4,6 @@
 
 ## Installation
 
-###  [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
-
-### Manual
 #### Install Dependencies
 
 Fedora `sudo dnf install nautilus-python python3-gobject`
@@ -23,8 +20,16 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
 
 4. Restart the Nautilus (`nautilus -q`)
 
+## Currently supported languages 
+- English
+- French
+- German
+- Greek
+- Polish
+- Portuguese
+- Russian
 
-## Add new translations
+#### Add new translations
 
 Translations files are in `translations` directory
 
