@@ -39,4 +39,6 @@ example: [English Translation](translations/en.json)
 
 2. Translate the values in the new file
 
+3. Add information in the README in the section *Currently supported languages* about new language 
+
 3. Create Pull Request with the new translation
