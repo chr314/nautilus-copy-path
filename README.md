@@ -40,6 +40,7 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
 - French
 - German
 - Greek
+- Italian
 - Polish
 - Portuguese
 - Romanian
