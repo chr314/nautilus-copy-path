@@ -7,6 +7,7 @@ import os
 class Translation:
     _translations_path = os.path.join(os.path.dirname(__file__), 'translations')
     _translations = []
+    _default_translations = []
 
     @staticmethod
     def select_language(lang_code=""):
@@ -31,6 +32,11 @@ class Translation:
             with open(file_path) as json_file:
                 Translation._translations = json.load(json_file)
 
+        file_path_en = Translation._translations_path + "/en.json"
+        if os.path.isfile(file_path_en):
+            with open(file_path_en) as json_file:
+                Translation._default_translations = json.load(json_file)
+
     @staticmethod
     def available_languages():
         return [os.path.splitext(os.path.basename(x))[0] for x in glob.glob(Translation._translations_path + '/*.json')]
@@ -41,3 +47,5 @@ class Translation:
             Translation.select_language()
         if translation in Translation._translations:
             return Translation._translations[translation]
+        elif translation in Translation._default_translations:
+            return Translation._default_translations[translation]
