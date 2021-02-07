@@ -24,17 +24,27 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
             name="NautilusCopyPath::CopyPath" + group,
             label=Translation.t("copy_paths") if plural else Translation.t("copy_path"),
         )
+        item_uri = Nautilus.MenuItem(
+            name="NautilusCopyPath::CopyUri" + group,
+            label=Translation.t("copy_uris") if plural else Translation.t("copy_uri"),
+        )
         item_name = Nautilus.MenuItem(
             name="NautilusCopyPath::CopyName" + group,
             label=Translation.t("copy_names") if plural else Translation.t("copy_name"),
         )
 
         item_path.connect("activate", self._copy_paths, files)
+        item_uri.connect("activate", self._copy_uris, files)
         item_name.connect("activate", self._copy_names, files)
-        return [item_path, item_name]
+        return [item_path, item_uri, item_name]
 
     def _copy_paths(self, menu, files):
         paths = list(map(lambda f: f.get_location().get_path(), files))
+        if len(paths) > 0:
+            self.clipboard.set_text(", ".join(paths), -1)
+
+    def _copy_uris(self, menu, files):
+        paths = list(map(lambda f: f.get_uri(), files))
         if len(paths) > 0:
             self.clipboard.set_text(", ".join(paths), -1)
 
