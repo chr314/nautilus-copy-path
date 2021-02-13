@@ -36,6 +36,7 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
 4. Restart the Nautilus (`nautilus -q`)
 
 ## Currently supported languages 
+- Chinese
 - English
 - French
 - German
