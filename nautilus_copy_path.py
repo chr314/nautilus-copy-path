@@ -11,6 +11,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def __init__(self):
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        self.clipboard_primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
 
     def get_file_items(self, window, files):
         return self._create_menu_items(files, "File")
@@ -39,16 +40,16 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
         return [item_path, item_uri, item_name]
 
     def _copy_paths(self, menu, files):
-        paths = list(map(lambda f: f.get_location().get_path(), files))
-        if len(paths) > 0:
-            self.clipboard.set_text(", ".join(paths), -1)
+        self._copy_value(list(map(lambda f: f.get_location().get_path(), files)))
 
     def _copy_uris(self, menu, files):
-        paths = list(map(lambda f: f.get_uri(), files))
-        if len(paths) > 0:
-            self.clipboard.set_text(", ".join(paths), -1)
+        self._copy_value(list(map(lambda f: f.get_uri(), files)))
 
     def _copy_names(self, menu, files):
-        paths = list(map(lambda x: os.path.basename(x.get_location().get_path()), files))
-        if len(paths) > 0:
-            self.clipboard.set_text(", ".join(paths), -1)
+        self._copy_value(list(map(lambda x: os.path.basename(x.get_location().get_path()), files)))
+
+    def _copy_value(self, value):
+        if len(value) > 0:
+            new_value = ", ".join(value)
+            self.clipboard.set_text(new_value, -1)
+            self.clipboard_primary.set_text(new_value, -1)
