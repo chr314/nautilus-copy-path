@@ -1,4 +1,5 @@
 import os
+import json
 from translation import Translation
 from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
@@ -13,6 +14,9 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.clipboard_primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
 
+        with open(os.path.join(os.path.dirname(__file__), 'config.json')) as json_file:
+            self.config = json.load(json_file)
+
     def get_file_items(self, window, files):
         return self._create_menu_items(files, "File")
 
@@ -21,23 +25,34 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _create_menu_items(self, files, group):
         plural = len(files) > 1
-        item_path = Nautilus.MenuItem(
-            name="NautilusCopyPath::CopyPath" + group,
-            label=Translation.t("copy_paths") if plural else Translation.t("copy_path"),
-        )
-        item_uri = Nautilus.MenuItem(
-            name="NautilusCopyPath::CopyUri" + group,
-            label=Translation.t("copy_uris") if plural else Translation.t("copy_uri"),
-        )
-        item_name = Nautilus.MenuItem(
-            name="NautilusCopyPath::CopyName" + group,
-            label=Translation.t("copy_names") if plural else Translation.t("copy_name"),
-        )
+        config_items = self.config["items"]
+        active_items = []
 
-        item_path.connect("activate", self._copy_paths, files)
-        item_uri.connect("activate", self._copy_uris, files)
-        item_name.connect("activate", self._copy_names, files)
-        return [item_path, item_uri, item_name]
+        if config_items["path"]:
+            item_path = Nautilus.MenuItem(
+                name="NautilusCopyPath::CopyPath" + group,
+                label=Translation.t("copy_paths" if plural else "copy_path"),
+            )
+            item_path.connect("activate", self._copy_paths, files)
+            active_items.append(item_path)
+
+        if config_items["uri"]:
+            item_uri = Nautilus.MenuItem(
+                name="NautilusCopyPath::CopyUri" + group,
+                label=Translation.t("copy_uris" if plural else "copy_uri"),
+            )
+            item_uri.connect("activate", self._copy_uris, files)
+            active_items.append(item_uri)
+
+        if config_items["name"]:
+            item_name = Nautilus.MenuItem(
+                name="NautilusCopyPath::CopyName" + group,
+                label=Translation.t("copy_names" if plural else "copy_name"),
+            )
+            item_name.connect("activate", self._copy_names, files)
+            active_items.append(item_name)
+
+        return active_items
 
     def _copy_paths(self, menu, files):
         self._copy_value(list(map(lambda f: f.get_location().get_path(), files)))
@@ -51,5 +66,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
     def _copy_value(self, value):
         if len(value) > 0:
             new_value = ", ".join(value)
-            self.clipboard.set_text(new_value, -1)
-            self.clipboard_primary.set_text(new_value, -1)
+            if self.config["selections"]["clipboard"]:
+                self.clipboard.set_text(new_value, -1)
+            if self.config["selections"]["primary"]:
+                self.clipboard_primary.set_text(new_value, -1)

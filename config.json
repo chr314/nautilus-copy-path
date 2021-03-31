@@ -1,0 +1,11 @@
+{
+  "items": {
+    "path": true,
+    "uri": true,
+    "name": true
+  },
+  "selections": {
+    "clipboard": true,
+    "primary": true
+  }
+}
