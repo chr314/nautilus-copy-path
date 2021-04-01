@@ -58,9 +58,9 @@ example:
     "clipboard": true,
     "primary": true
   },
-  "language": "auto"
+  "language": "auto",
+  "separator": ", "
 }
-
 ```
 
 
