@@ -43,6 +43,27 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
    
 3. Restart the Nautilus (`nautilus -q`)
 
+## Configuration
+configuration file: [config.json](config.json)
+
+example:
+```json
+{
+  "items": {
+    "path": true,
+    "uri": true,
+    "name": true
+  },
+  "selections": {
+    "clipboard": true,
+    "primary": true
+  },
+  "language": "auto"
+}
+
+```
+
+
 ## Currently supported languages 
 - Chinese
 - English
