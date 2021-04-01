@@ -14,8 +14,27 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.clipboard_primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
 
-        with open(os.path.join(os.path.dirname(__file__), 'config.json')) as json_file:
-            self.config = json.load(json_file)
+        self.config = {
+            "items": {
+                "path": True,
+                "uri": True,
+                "name": True
+            },
+            "selections": {
+                "clipboard": True,
+                "primary": True
+            },
+            "language": "auto",
+            "separator": ", "
+        }
+
+        with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
+            try:
+                self.config.update(json.load(json_file))
+                if self.config["language"]:
+                    Translation.select_language(self.config["language"])
+            except:
+                pass
 
     def get_file_items(self, window, files):
         return self._create_menu_items(files, "File")
@@ -65,7 +84,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_value(self, value):
         if len(value) > 0:
-            new_value = ", ".join(value)
+            new_value = self.config["separator"].join(value)
             if self.config["selections"]["clipboard"]:
                 self.clipboard.set_text(new_value, -1)
             if self.config["selections"]["primary"]:

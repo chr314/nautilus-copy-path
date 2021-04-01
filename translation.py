@@ -11,11 +11,6 @@ class Translation:
 
     @staticmethod
     def select_language(lang_code="auto"):
-        with open(os.path.join(os.path.dirname(__file__), 'config.json')) as config_file:
-            config = json.load(config_file)
-            if config["language"]:
-                lang_code = config["language"]
-
         if not lang_code or lang_code == "auto":
             default_locale = locale.getdefaultlocale()[0]
             try:
