@@ -7,5 +7,6 @@
   "selections": {
     "clipboard": true,
     "primary": true
-  }
+  },
+  "language": "auto"
 }
