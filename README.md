@@ -33,7 +33,7 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
 
 3. `make install`
 
-4. Restart the Nautilus (`nautilus -q`)
+4. Restart the Nautilus (`nautilus -q`) if not seeing the options.
 
 ## Uninstallation
 
@@ -41,7 +41,7 @@ Ubuntu `sudo apt install python-nautilus python3-gi`
    
 2. `make uninstall`
    
-3. Restart the Nautilus (`nautilus -q`)
+3. Restart the Nautilus (`nautilus -q`) if still seeing the options after uninstall.
 
 ## Configuration
 configuration file: [config.json](config.json)
