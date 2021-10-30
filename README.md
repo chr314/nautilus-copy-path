@@ -2,22 +2,14 @@
 
 ![ScreenShot](https://raw.githubusercontent.com/chr314/nautilus-copy-path/master/screenshot.png)
 
-## Installation
+# Installation
 
-###  [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
+##  [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
 
-#### With yay or yaourt
 1. `yay -S nautilus-copy-path` or `yaourt -S nautilus-copy-path`
 2. Restart the Nautilus (`nautilus -q`)
 
-#### Or manual
-1. `git clone https://aur.archlinux.org/nautilus-copy-path.git`
-2. `cd nautilus`
-3. `makepkg -si`
-4. Restart the Nautilus (`nautilus -q`)
-
-
-### Manual installation
+## Manual installation
 
 #### Install Dependencies
 
