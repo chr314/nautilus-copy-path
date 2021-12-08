@@ -58,17 +58,20 @@ example:
 
 ## Currently supported languages 
 - Chinese
+- Danish
 - English
 - French
 - German
 - Greek
 - Italian
 - Japanese
+- Norwegian
 - Polish
 - Portuguese
 - Romanian
 - Russian
 - Spanish
+- Swedish
 
 #### Add new translations
 
