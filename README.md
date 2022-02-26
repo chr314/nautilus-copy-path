@@ -74,6 +74,7 @@ example:
 - Russian
 - Spanish
 - Swedish
+- Turkish
 
 #### Add new translations
 
