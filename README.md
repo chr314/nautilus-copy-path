@@ -15,7 +15,7 @@
 
 Fedora `sudo dnf install nautilus-python python3-gobject`
 
-Ubuntu `sudo apt install python-nautilus python3-gi`
+Ubuntu `sudo apt install python3-nautilus python3-gi`
 
 Arch `sudo pacman -S python-nautilus python-gobject`
 
