@@ -2,5 +2,7 @@
   "copy_path": "Copiar endereço",
   "copy_paths": "Copiar endereços",
   "copy_name": "Copiar nome",
-  "copy_names": "Copiar nomes"
+  "copy_names": "Copiar nomes",
+  "copy_uri": "Copiar URI",
+  "copy_uris": "Copiar URIs"
 }
