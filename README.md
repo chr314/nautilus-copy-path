@@ -59,6 +59,7 @@ example:
 
 
 ## Currently supported languages 
+- Arabic
 - Chinese
 - Danish
 - English
