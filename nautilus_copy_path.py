@@ -22,7 +22,8 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
             },
             "selections": {
                 "clipboard": True,
-                "primary": True
+                "primary": True,
+                "quote_spaces": False
             },
             "language": "auto",
             "separator": ", "
@@ -84,6 +85,9 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_value(self, value):
         if len(value) > 0:
+            if self.config["selections"].get("quote_spaces"):
+                value = ['"'+x+'"' if ' ' in x else x for x in value]
+                
             new_value = self.config["separator"].join(value)
             if self.config["selections"]["clipboard"]:
                 self.clipboard.set_text(new_value, -1)

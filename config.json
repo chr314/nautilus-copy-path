@@ -6,7 +6,8 @@
   },
   "selections": {
     "clipboard": true,
-    "primary": true
+    "primary": true,
+    "quote_spaces": false
   },
   "language": "auto",
   "separator": ", "
