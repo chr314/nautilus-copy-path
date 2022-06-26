@@ -25,7 +25,8 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 "primary": True
             },
             "language": "auto",
-            "separator": ", "
+            "separator": ", ",
+            "quote_spaces": False
         }
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
@@ -84,6 +85,9 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_value(self, value):
         if len(value) > 0:
+            if self.config["quote_spaces"]:
+                value = ['"'+x+'"' if ' ' in x else x for x in value]
+
             new_value = self.config["separator"].join(value)
             if self.config["selections"]["clipboard"]:
                 self.clipboard.set_text(new_value, -1)

@@ -9,5 +9,6 @@
     "primary": true
   },
   "language": "auto",
-  "separator": ", "
+  "separator": ", ",
+  "quote_spaces": false
 }
