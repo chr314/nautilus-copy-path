@@ -76,6 +76,7 @@ example:
 - Spanish
 - Swedish
 - Turkish
+- Vietnamese
 
 #### Add new translations
 
