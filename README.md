@@ -53,7 +53,9 @@ example:
     "primary": true
   },
   "language": "auto",
-  "separator": ", "
+  "separator": ", ",
+  "escape_value_items": false,
+  "escape_value": false
 }
 ```
 
