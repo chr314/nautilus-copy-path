@@ -1,5 +1,6 @@
 import os
 import json
+import shlex
 from translation import Translation
 from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
@@ -25,7 +26,8 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 "primary": True
             },
             "language": "auto",
-            "separator": ", "
+            "separator": ", ",
+            "quote_paths": False
         }
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
@@ -52,7 +54,12 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 name="NautilusCopyPath::CopyPath" + group,
                 label=Translation.t("copy_paths" if plural else "copy_path"),
             )
-            item_path.connect("activate", self._copy_paths, files)
+
+            if not self.config["quote_paths"]:
+                item_path.connect("activate", self._copy_paths, files)
+            else:
+                item_path.connect("activate", self._copy_paths_quoted, files)
+
             active_items.append(item_path)
 
         if config_items["uri"]:
@@ -75,6 +82,9 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_paths(self, menu, files):
         self._copy_value(list(map(lambda f: f.get_location().get_path(), files)))
+        
+    def _copy_paths_quoted(self, menu, files):
+        self._copy_value(list(map(lambda f: shlex.quote(f.get_location().get_path()), files)))
 
     def _copy_uris(self, menu, files):
         self._copy_value(list(map(lambda f: f.get_uri(), files)))
