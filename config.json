@@ -10,5 +10,6 @@
   },
   "language": "auto",
   "separator": ", ",
-  "quote_paths": false
+  "escape_value_items": false,
+  "escape_value": false
 }

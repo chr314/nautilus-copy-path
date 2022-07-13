@@ -27,7 +27,8 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
             },
             "language": "auto",
             "separator": ", ",
-            "quote_paths": False
+            "escape_value_items": False,
+            "escape_value": False
         }
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
@@ -54,12 +55,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 name="NautilusCopyPath::CopyPath" + group,
                 label=Translation.t("copy_paths" if plural else "copy_path"),
             )
-
-            if not self.config["quote_paths"]:
-                item_path.connect("activate", self._copy_paths, files)
-            else:
-                item_path.connect("activate", self._copy_paths_quoted, files)
-
+            item_path.connect("activate", self._copy_paths, files)
             active_items.append(item_path)
 
         if config_items["uri"]:
@@ -82,9 +78,6 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_paths(self, menu, files):
         self._copy_value(list(map(lambda f: f.get_location().get_path(), files)))
-        
-    def _copy_paths_quoted(self, menu, files):
-        self._copy_value(list(map(lambda f: shlex.quote(f.get_location().get_path()), files)))
 
     def _copy_uris(self, menu, files):
         self._copy_value(list(map(lambda f: f.get_uri(), files)))
@@ -94,7 +87,14 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_value(self, value):
         if len(value) > 0:
+            if self.config["escape_value_items"]:
+                value = list(map(lambda x: shlex.quote(x), value))
+
             new_value = self.config["separator"].join(value)
+
+            if self.config["escape_value"]:
+                new_value = shlex.quote(new_value)
+
             if self.config["selections"]["clipboard"]:
                 self.clipboard.set_text(new_value, -1)
             if self.config["selections"]["primary"]:
