@@ -1,5 +1,6 @@
 import os
 import json
+import shlex
 from translation import Translation
 from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
@@ -25,7 +26,9 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 "primary": True
             },
             "language": "auto",
-            "separator": ", "
+            "separator": ", ",
+            "escape_value_items": False,
+            "escape_value": False
         }
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
@@ -84,7 +87,14 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
 
     def _copy_value(self, value):
         if len(value) > 0:
+            if self.config["escape_value_items"]:
+                value = list(map(lambda x: shlex.quote(x), value))
+
             new_value = self.config["separator"].join(value)
+
+            if self.config["escape_value"]:
+                new_value = shlex.quote(new_value)
+
             if self.config["selections"]["clipboard"]:
                 self.clipboard.set_text(new_value, -1)
             if self.config["selections"]["primary"]:
