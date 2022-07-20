@@ -8,6 +8,11 @@
     "clipboard": true,
     "primary": true
   },
+  "shortcuts": {
+    "path": "<Ctrl><Shift>C",
+    "uri": "<Ctrl><Shift>U",
+    "name": "<Ctrl><Shift>N"
+  },
   "language": "auto",
   "separator": ", ",
   "escape_value_items": false,

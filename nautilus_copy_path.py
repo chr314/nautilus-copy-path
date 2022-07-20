@@ -9,7 +9,7 @@ require_version('Gtk', '3.0')
 require_version('Nautilus', '3.0')
 
 
-class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
+class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.LocationWidgetProvider):
 
     def __init__(self):
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
@@ -25,6 +25,11 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
                 "clipboard": True,
                 "primary": True
             },
+            "shortcuts": {
+                "path": "<Ctrl><Shift>C",
+                "uri": "<Ctrl><Shift>U",
+                "name": "<Ctrl><Shift>N"
+            },
             "language": "auto",
             "separator": ", ",
             "escape_value_items": False,
@@ -39,11 +44,45 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject):
             except:
                 pass
 
+        self.accel_group = Gtk.AccelGroup()
+        for key in self.config["shortcuts"]:
+            try:
+                keyval, modifier = Gtk.accelerator_parse(self.config["shortcuts"][key])
+                self.accel_group.connect(keyval, modifier, Gtk.AccelFlags.VISIBLE,
+                                         lambda *args, action=key: self._shortcuts_handler(action, *args))
+            except:
+                pass
+
+        self.window = None
+
+    def _shortcuts_handler(self, action, accel_group, acceleratable, keyval, modifier):
+        items = self._get_selection()
+        action_function = {'path': self._copy_paths, 'uri': self._copy_uris, 'name': self._copy_names}[action]
+        if len(items) > 0 and action_function:
+            action_function(None, items)
+        return True
+
     def get_file_items(self, window, files):
         return self._create_menu_items(files, "File")
 
     def get_background_items(self, window, file):
         return self._create_menu_items([file], "Background")
+
+    def get_widget(self, uri, window):
+        if self.window:
+            self.window.remove_accel_group(self.accel_group)
+        window.add_accel_group(self.accel_group)
+        self.window = window
+        return None
+
+    def _get_selection(self):
+        focus = self.window.get_focus()
+        items = []
+        if not isinstance(focus, Gtk.TreeView) and focus.get_parent().get_name() == 'NautilusListView':
+            return items
+
+        focus.get_selection().selected_foreach(lambda tree, path, iter, uris: uris.append(tree[iter][0]), items)
+        return items
 
     def _create_menu_items(self, files, group):
         plural = len(files) > 1
