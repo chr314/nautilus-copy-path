@@ -4,7 +4,7 @@
 
 # Installation
 
-##  [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
+## [AUR](https://aur.archlinux.org/packages/nautilus-copy-path/)
 
 1. `yay -S nautilus-copy-path` or `yaourt -S nautilus-copy-path`
 2. Restart the Nautilus (`nautilus -q`)
@@ -32,15 +32,27 @@ Arch `sudo pacman -S python-nautilus python-gobject`
 ## Uninstallation
 
 1. `cd path/to/nautilus-copy-path`
-   
+
 2. `make uninstall`
-   
+
 3. Restart the Nautilus (`nautilus -q`) if still seeing the options after uninstall.
 
+## Keyboard Shortcuts
+
+Default Keyboard Shortcuts
+
+| Action     | Shortcut         |
+|------------|------------------|
+| Copy Paths | Ctrl + Shift + C |
+| Copy URIs  | Ctrl + Shift + U |
+| Copy Names | Ctrl + Shift + D |
+
 ## Configuration
+
 configuration file: [config.json](config.json)
 
 example:
+
 ```json
 {
   "items": {
@@ -52,6 +64,11 @@ example:
     "clipboard": true,
     "primary": true
   },
+  "shortcuts": {
+    "path": "<Ctrl><Shift>C",
+    "uri": "<Ctrl><Shift>U",
+    "name": "<Ctrl><Shift>D"
+  },
   "language": "auto",
   "separator": ", ",
   "escape_value_items": false,
@@ -59,8 +76,8 @@ example:
 }
 ```
 
+## Currently supported languages
 
-## Currently supported languages 
 - Arabic
 - Chinese
 - Danish
@@ -90,6 +107,6 @@ example: [English Translation](translations/en.json)
 
 2. Translate the values in the new file
 
-3. Add information in the README in the section *Currently supported languages* about new language 
+3. Add information in the README in the section *Currently supported languages* about new language
 
 3. Create Pull Request with the new translation

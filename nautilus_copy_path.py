@@ -28,7 +28,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             "shortcuts": {
                 "path": "<Ctrl><Shift>C",
                 "uri": "<Ctrl><Shift>U",
-                "name": "<Ctrl><Shift>N"
+                "name": "<Ctrl><Shift>D"
             },
             "language": "auto",
             "separator": ", ",
