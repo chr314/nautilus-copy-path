@@ -82,6 +82,7 @@ example:
 - Chinese
 - Danish
 - English
+- Finnish
 - French
 - German
 - Greek
