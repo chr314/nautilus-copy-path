@@ -120,7 +120,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
     def _copy_paths(self, menu, files):
         def _uri_to_path(file):
             p = urlparse(file.get_activation_uri())
-            return os.path.abspath(os.path.join(p.netloc, p.path))
+            return os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
 
         self._copy_value(list(map(_uri_to_path, files)))
 
