@@ -72,7 +72,8 @@ example:
   "language": "auto",
   "separator": ", ",
   "escape_value_items": false,
-  "escape_value": false
+  "escape_value": false,
+  "name_ignore_extension": false
 }
 ```
 
