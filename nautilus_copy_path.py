@@ -1,6 +1,7 @@
 import os
 import json
 import shlex
+from urllib.parse import urlparse, unquote
 from translation import Translation
 from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
@@ -33,7 +34,8 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             "language": "auto",
             "separator": ", ",
             "escape_value_items": False,
-            "escape_value": False
+            "escape_value": False,
+            "name_ignore_extension": False
         }
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
@@ -116,13 +118,24 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
         return active_items
 
     def _copy_paths(self, menu, files):
-        self._copy_value(list(map(lambda f: f.get_location().get_path(), files)))
+        def _uri_to_path(file):
+            p = urlparse(file.get_activation_uri())
+            return os.path.abspath(os.path.join(p.netloc, p.path))
+
+        self._copy_value(list(map(_uri_to_path, files)))
 
     def _copy_uris(self, menu, files):
-        self._copy_value(list(map(lambda f: f.get_uri(), files)))
+        self._copy_value(list(map(lambda f: f.get_activation_uri(), files)))
 
     def _copy_names(self, menu, files):
-        self._copy_value(list(map(lambda x: os.path.basename(x.get_location().get_path()), files)))
+        def _name(file):
+            path = unquote(os.path.basename(file.get_activation_uri()))
+            if self.config["name_ignore_extension"]:
+                path = os.path.splitext(path)[0]
+
+            return path
+
+        self._copy_value(list(map(_name, files)))
 
     def _copy_value(self, value):
         if len(value) > 0:
