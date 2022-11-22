@@ -22,7 +22,8 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             "items": {
                 "path": True,
                 "uri": True,
-                "name": True
+                "name": True,
+                "content": True
             },
             "selections": {
                 "clipboard": True,
@@ -39,6 +40,16 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             "escape_value": False,
             "name_ignore_extension": False
         }
+
+        self.allow_copy_content = [
+                "text/x-python",
+                "application/x-shellscript",
+                "text/markdown",
+                "text/plain",
+                "text/x-makefile",
+                "text/x-csrc",
+                "text/x-chdr",
+                ]
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
             try:
@@ -119,6 +130,18 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             item_name.connect("activate", self._copy_names, files)
             active_items.append(item_name)
 
+        if config_items["content"]:
+            if len(files) == 1 and files[0].get_uri_scheme() == "file" and files[0].is_directory() == False:
+                file_type = files[0].get_mime_type()
+                print(file_type)
+                if file_type in self.allow_copy_content:
+                    item_name = Nautilus.MenuItem(
+                        name="NautilusCopyPath::CopyContent" + group,
+                        label=Translation.t("copy_content"),
+                    )
+                    item_name.connect("activate", self._copy_content, files[0])
+                    active_items.append(item_name)
+
         return active_items
 
     def _copy_paths(self, menu, files):
@@ -140,6 +163,15 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             return path
 
         self._copy_value(list(map(_name, files)))
+
+    def _copy_content(self, menu, file):
+        p = urlparse(file.get_activation_uri())
+        p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
+        with open(p, 'r') as file:
+            data = file.read()
+        content = [data]
+        self._copy_value(content)
+        print(content)
 
     def _copy_value(self, value):
         if len(value) > 0:

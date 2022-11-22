@@ -4,5 +4,6 @@
   "copy_name": "复制文件名",
   "copy_names": "复制各个文件名",
   "copy_uri": "复制URI",
-  "copy_uris": "复制各个URI"
+  "copy_uris": "复制各个URI",
+  "copy_content": "复制文本内容"
 }
