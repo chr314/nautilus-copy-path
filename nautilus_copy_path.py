@@ -3,18 +3,20 @@ import json
 import shlex
 from urllib.parse import urlparse, unquote
 from translation import Translation
-from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
+require_version('Gtk', '4.0')
+from gi.repository import Nautilus, GObject, Gtk, Gdk
 
-require_version('Gtk', '3.0')
-require_version('Nautilus', '3.0')
+#require_version('Nautilus', '4.0')
 
 
-class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.LocationWidgetProvider):
+class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
 
     def __init__(self):
-        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        self.clipboard_primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
+
+        self.display = Gdk.Display.get_default()
+        self.clipboard = self.display.get_clipboard()
+        self.primary_clipboard = self.display.get_primary_clipboard()
 
         self.config = {
             "items": {
@@ -46,14 +48,14 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             except:
                 pass
 
-        self.accel_group = Gtk.AccelGroup()
-        for key in self.config["shortcuts"]:
-            try:
-                keyval, modifier = Gtk.accelerator_parse(self.config["shortcuts"][key])
-                self.accel_group.connect(keyval, modifier, Gtk.AccelFlags.VISIBLE,
-                                         lambda *args, action=key: self._shortcuts_handler(action, *args))
-            except:
-                pass
+        #self.accel_group = Gtk.AccelGroup()
+        #for key in self.config["shortcuts"]:
+        #    try:
+        #        keyval, modifier = Gtk.accelerator_parse(self.config["shortcuts"][key])
+        #        self.accel_group.connect(keyval, modifier, Gtk.AccelFlags.VISIBLE,
+        #                                 lambda *args, action=key: self._shortcuts_handler(action, *args))
+        #    except:
+        #        pass
 
         self.window = None
 
@@ -64,18 +66,20 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             action_function(None, items)
         return True
 
-    def get_file_items(self, window, files):
+    def get_file_items(self, *args):
+        files = args[-1]
         return self._create_menu_items(files, "File")
 
-    def get_background_items(self, window, file):
+    def get_background_items(self, *args):
+        file = args[-1]
         return self._create_menu_items([file], "Background")
 
-    def get_widget(self, uri, window):
-        if self.window:
-            self.window.remove_accel_group(self.accel_group)
-        window.add_accel_group(self.accel_group)
-        self.window = window
-        return None
+    #def get_widget(self, uri, window):
+    #    if self.window:
+    #        self.window.remove_accel_group(self.accel_group)
+    #    window.add_accel_group(self.accel_group)
+    #    self.window = window
+    #    return None
 
     def _get_selection(self):
         focus = self.window.get_focus()
@@ -143,11 +147,13 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
                 value = list(map(lambda x: shlex.quote(x), value))
 
             new_value = self.config["separator"].join(value)
+            
 
             if self.config["escape_value"]:
                 new_value = shlex.quote(new_value)
 
             if self.config["selections"]["clipboard"]:
-                self.clipboard.set_text(new_value, -1)
+                self.clipboard.set(new_value)
+
             if self.config["selections"]["primary"]:
-                self.clipboard_primary.set_text(new_value, -1)
+                self.primary_clipboard.set(new_value)
