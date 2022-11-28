@@ -4,10 +4,9 @@ import shlex
 from urllib.parse import urlparse, unquote
 from translation import Translation
 from gi import require_version
+
 require_version('Gtk', '4.0')
 from gi.repository import Nautilus, GObject, Gtk, Gdk
-
-#require_version('Nautilus', '4.0')
 
 
 class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
@@ -42,14 +41,9 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
         }
 
         self.allow_copy_content = [
-                "text/x-python",
-                "application/x-shellscript",
-                "text/markdown",
-                "text/plain",
-                "text/x-makefile",
-                "text/x-csrc",
-                "text/x-chdr",
-                ]
+            "application/x-shellscript",
+            "application/json",
+        ]
 
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
             try:
@@ -131,16 +125,19 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             active_items.append(item_name)
 
         if config_items["content"]:
-            if len(files) == 1 and files[0].get_uri_scheme() == "file" and files[0].is_directory() == False:
-                file_type = files[0].get_mime_type()
-                print(file_type)
-                if file_type in self.allow_copy_content:
-                    item_name = Nautilus.MenuItem(
-                        name="NautilusCopyPath::CopyContent" + group,
-                        label=Translation.t("copy_content"),
-                    )
-                    item_name.connect("activate", self._copy_content, files[0])
-                    active_items.append(item_name)
+            filtered_files = []
+            for file in files:
+                file_type = file.get_mime_type()
+                if file_type in self.allow_copy_content or file_type.startswith("text/"):
+                    filtered_files.append(file)
+
+            if len(filtered_files) > 0:
+                item_name = Nautilus.MenuItem(
+                    name="NautilusCopyPath::CopyContent" + group,
+                    label=Translation.t("copy_content"),
+                )
+                item_name.connect("activate", self._copy_content, filtered_files)
+                active_items.append(item_name)
 
         return active_items
 
@@ -164,14 +161,16 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
 
         self._copy_value(list(map(_name, files)))
 
-    def _copy_content(self, menu, file):
-        p = urlparse(file.get_activation_uri())
-        p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
-        with open(p, 'r') as file:
-            data = file.read()
-        content = [data]
+    def _copy_content(self, menu, files):
+        print(files)
+        content = []
+        for file in files:
+            p = urlparse(file.get_activation_uri())
+            p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
+            with open(p, 'r') as _file:
+                content.append(_file.read())
+
         self._copy_value(content)
-        print(content)
 
     def _copy_value(self, value):
         if len(value) > 0:
@@ -179,7 +178,6 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
                 value = list(map(lambda x: shlex.quote(x), value))
 
             new_value = self.config["separator"].join(value)
-            
 
             if self.config["escape_value"]:
                 new_value = shlex.quote(new_value)
