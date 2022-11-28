@@ -162,7 +162,6 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
         self._copy_value(list(map(_name, files)))
 
     def _copy_content(self, menu, files):
-        print(files)
         content = []
         for file in files:
             p = urlparse(file.get_activation_uri())
