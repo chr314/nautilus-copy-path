@@ -3,24 +3,27 @@ import json
 import shlex
 from urllib.parse import urlparse, unquote
 from translation import Translation
-from gi.repository import Nautilus, GObject, Gtk, Gdk
 from gi import require_version
+import gi
 
-require_version('Gtk', '3.0')
-require_version('Nautilus', '3.0')
+require_version('Gtk', '4.0')
+from gi.repository import Nautilus, GObject, Gtk, Gdk, GLib
 
 
-class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.LocationWidgetProvider):
+class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
 
     def __init__(self):
-        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        self.clipboard_primary = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY)
+
+        self.display = Gdk.Display.get_default()
+        self.clipboard = self.display.get_clipboard()
+        self.primary_clipboard = self.display.get_primary_clipboard()
 
         self.config = {
             "items": {
                 "path": True,
                 "uri": True,
-                "name": True
+                "name": True,
+                "content": True
             },
             "selections": {
                 "clipboard": True,
@@ -38,6 +41,11 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             "name_ignore_extension": False
         }
 
+        self.allow_copy_content = [
+            "application/x-shellscript",
+            "application/json",
+        ]
+
         with open(os.path.join(os.path.dirname(__file__), "config.json")) as json_file:
             try:
                 self.config.update(json.load(json_file))
@@ -46,45 +54,13 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             except:
                 pass
 
-        self.accel_group = Gtk.AccelGroup()
-        for key in self.config["shortcuts"]:
-            try:
-                keyval, modifier = Gtk.accelerator_parse(self.config["shortcuts"][key])
-                self.accel_group.connect(keyval, modifier, Gtk.AccelFlags.VISIBLE,
-                                         lambda *args, action=key: self._shortcuts_handler(action, *args))
-            except:
-                pass
-
-        self.window = None
-
-    def _shortcuts_handler(self, action, accel_group, acceleratable, keyval, modifier):
-        items = self._get_selection()
-        action_function = {'path': self._copy_paths, 'uri': self._copy_uris, 'name': self._copy_names}[action]
-        if len(items) > 0 and action_function:
-            action_function(None, items)
-        return True
-
-    def get_file_items(self, window, files):
+    def get_file_items(self, *args):
+        files = args[-1]
         return self._create_menu_items(files, "File")
 
-    def get_background_items(self, window, file):
+    def get_background_items(self, *args):
+        file = args[-1]
         return self._create_menu_items([file], "Background")
-
-    def get_widget(self, uri, window):
-        if self.window:
-            self.window.remove_accel_group(self.accel_group)
-        window.add_accel_group(self.accel_group)
-        self.window = window
-        return None
-
-    def _get_selection(self):
-        focus = self.window.get_focus()
-        items = []
-        if not isinstance(focus, Gtk.TreeView) and focus.get_parent().get_name() == 'NautilusListView':
-            return items
-
-        focus.get_selection().selected_foreach(lambda tree, path, iter, uris: uris.append(tree[iter][0]), items)
-        return items
 
     def _create_menu_items(self, files, group):
         plural = len(files) > 1
@@ -115,6 +91,21 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
             item_name.connect("activate", self._copy_names, files)
             active_items.append(item_name)
 
+        if config_items["content"]:
+            filtered_files = []
+            for file in files:
+                file_type = file.get_mime_type()
+                if file_type in self.allow_copy_content or file_type.startswith("text/"):
+                    filtered_files.append(file)
+
+            if len(filtered_files) > 0:
+                item_name = Nautilus.MenuItem(
+                    name="NautilusCopyPath::CopyContent" + group,
+                    label=Translation.t("copy_content"),
+                )
+                item_name.connect("activate", self._copy_content, filtered_files)
+                active_items.append(item_name)
+
         return active_items
 
     def _copy_paths(self, menu, files):
@@ -137,6 +128,16 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
 
         self._copy_value(list(map(_name, files)))
 
+    def _copy_content(self, menu, files):
+        content = []
+        for file in files:
+            p = urlparse(file.get_activation_uri())
+            p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
+            with open(p, 'r') as _file:
+                content.append(_file.read())
+
+        self._copy_value(content)
+
     def _copy_value(self, value):
         if len(value) > 0:
             if self.config["escape_value_items"]:
@@ -148,6 +149,7 @@ class NautilusCopyPath(Nautilus.MenuProvider, GObject.GObject, Nautilus.Location
                 new_value = shlex.quote(new_value)
 
             if self.config["selections"]["clipboard"]:
-                self.clipboard.set_text(new_value, -1)
+                self.clipboard.set(new_value)
+
             if self.config["selections"]["primary"]:
-                self.clipboard_primary.set_text(new_value, -1)
+                self.primary_clipboard.set(new_value)
