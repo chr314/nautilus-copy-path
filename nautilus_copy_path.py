@@ -18,7 +18,6 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
                 shortcut = Gtk.Shortcut.new(Gtk.ShortcutTrigger.parse_string(shortcut_str), action)
                 shortcut.set_arguments(GLib.Variant.new_string(key))
 
-                window.do_enable_debugging(window, True)
                 window.add_shortcut(shortcut)
 
     def __init__(self):
