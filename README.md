@@ -58,7 +58,8 @@ example:
   "items": {
     "path": true,
     "uri": true,
-    "name": true
+    "name": true,
+    "content": true
   },
   "selections": {
     "clipboard": true,
