@@ -12,7 +12,8 @@
   "shortcuts": {
     "path": "<Ctrl><Shift>C",
     "uri": "<Ctrl><Shift>U",
-    "name": "<Ctrl><Shift>D"
+    "name": "<Ctrl><Shift>D",
+    "content": "<Ctrl><Shift>G"
   },
   "language": "auto",
   "separator": ", ",

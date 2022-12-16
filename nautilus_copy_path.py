@@ -11,12 +11,23 @@ from gi.repository import Nautilus, GObject, Gtk, Gdk, GLib
 
 
 class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
+    def _window_added(self, application, window):
+        for key, shortcut_str in self.config["shortcuts"].items():
+            if shortcut_str:
+                action = Gtk.CallbackAction.new(self._shortcuts_handler)
+                shortcut = Gtk.Shortcut.new(Gtk.ShortcutTrigger.parse_string(shortcut_str), action)
+                shortcut.set_arguments(GLib.Variant.new_string(key))
+
+                window.do_enable_debugging(window, True)
+                window.add_shortcut(shortcut)
 
     def __init__(self):
 
         self.display = Gdk.Display.get_default()
         self.clipboard = self.display.get_clipboard()
         self.primary_clipboard = self.display.get_primary_clipboard()
+
+        self.selected_files = {}
 
         self.config = {
             "items": {
@@ -32,7 +43,8 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             "shortcuts": {
                 "path": "<Ctrl><Shift>C",
                 "uri": "<Ctrl><Shift>U",
-                "name": "<Ctrl><Shift>D"
+                "name": "<Ctrl><Shift>D",
+                "content": "<Ctrl><Shift>G"
             },
             "language": "auto",
             "separator": ", ",
@@ -54,8 +66,30 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
             except:
                 pass
 
+        app = Gtk.Application.get_default()
+        app.connect("window-added", self._window_added)
+
+    def _shortcuts_handler(self, window, key):
+        action = GLib.Variant.get_string(key)
+        window_id = window.get_id()
+
+        action_function = {
+            'path': self._copy_paths,
+            'uri': self._copy_uris,
+            'name': self._copy_names,
+            'content': self._copy_content
+        }[action]
+
+        if len(self.selected_files[window_id]) > 0 and action_function:
+            action_function(None, self.selected_files[window_id])
+
     def get_file_items(self, *args):
+        app = Gtk.Application.get_default()
+        window = app.get_active_window()
         files = args[-1]
+
+        self.selected_files[window.get_id()] = files
+
         return self._create_menu_items(files, "File")
 
     def get_background_items(self, *args):
@@ -131,10 +165,12 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
     def _copy_content(self, menu, files):
         content = []
         for file in files:
-            p = urlparse(file.get_activation_uri())
-            p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
-            with open(p, 'r') as _file:
-                content.append(_file.read())
+            file_type = file.get_mime_type()
+            if file_type in self.allow_copy_content or file_type.startswith("text/"):
+                p = urlparse(file.get_activation_uri())
+                p = os.path.abspath(os.path.join(p.netloc, unquote(p.path)))
+                with open(p, 'r') as _file:
+                    content.append(_file.read())
 
         self._copy_value(content)
 

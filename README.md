@@ -41,11 +41,12 @@ Arch `sudo pacman -S python-nautilus python-gobject`
 
 Default Keyboard Shortcuts
 
-| Action     | Shortcut         |
-|------------|------------------|
-| Copy Paths | Ctrl + Shift + C |
-| Copy URIs  | Ctrl + Shift + U |
-| Copy Names | Ctrl + Shift + D |
+| Action             | Shortcut         |
+|--------------------|------------------|
+| Copy Paths         | Ctrl + Shift + C |
+| Copy URIs          | Ctrl + Shift + U |
+| Copy Names         | Ctrl + Shift + D |
+| Copy Files Content | Ctrl + Shift + G |
 
 ## Configuration
 
@@ -68,7 +69,8 @@ example:
   "shortcuts": {
     "path": "<Ctrl><Shift>C",
     "uri": "<Ctrl><Shift>U",
-    "name": "<Ctrl><Shift>D"
+    "name": "<Ctrl><Shift>D",
+    "content": "<Ctrl><Shift>G"
   },
   "language": "auto",
   "separator": ", ",
