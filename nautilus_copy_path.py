@@ -20,6 +20,11 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
 
                 window.add_shortcut(shortcut)
 
+    def _window_removed(self, application, window):
+        window_id = window.get_id()
+        if window_id in self.selected_files:
+            del self.selected_files[window_id]
+
     def __init__(self):
 
         self.display = Gdk.Display.get_default()
@@ -67,6 +72,7 @@ class NautilusCopyPath(GObject.Object, Nautilus.MenuProvider):
 
         app = Gtk.Application.get_default()
         app.connect("window-added", self._window_added)
+        app.connect("window-removed", self._window_removed)
 
     def _shortcuts_handler(self, window, key):
         action = GLib.Variant.get_string(key)
