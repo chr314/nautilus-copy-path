@@ -3,4 +3,7 @@
   "copy_paths": "Copier les chemins",
   "copy_name": "Copier le nom",
   "copy_names": "Copier les noms"
+  "copy_uri": "Copier l'URI",
+  "copy_uris": "Copier les URI",
+  "copy_content": "Copier le contenu"
 }
