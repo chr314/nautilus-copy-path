@@ -100,6 +100,7 @@ example:
 - Spanish
 - Swedish
 - Turkish
+- Ukrainian
 - Vietnamese
 
 #### Add new translations
