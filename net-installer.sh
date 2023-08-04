@@ -33,12 +33,13 @@ install_dependencies() {
 
 clear_exit() {
   rm -rf "${TMP_DIR}"
-  exit 1
+  exit 0
 }
 
 error_exit() {
   echo "${1}"
-  clear_exit
+  rm -rf "${TMP_DIR}"
+  exit 1
 }
 
 cd "${TMP_DIR}" || error_exit 'Failed to change directory'
