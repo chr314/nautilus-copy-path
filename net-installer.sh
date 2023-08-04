@@ -23,11 +23,11 @@ install_dependencies() {
   PACMAN_CMD=$(which pacman)
 
   if [[ -n $DNF_CMD ]]; then
-    dnf install nautilus-python python3-gobject
+    dnf -y install nautilus-python python3-gobject
   elif [[ -n $APT_GET_CMD ]]; then
-    apt-get install python3-nautilus python3-gi
+    apt-get -y install python3-nautilus python3-gi
   elif [[ -n $PACMAN_CMD ]]; then
-    pacman -S python-nautilus python-gobject
+    pacman -S python-nautilus python-gobject --noconfirm
   fi
 }
 
