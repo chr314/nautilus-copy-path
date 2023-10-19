@@ -1,6 +1,9 @@
 {
-  "copy_path": "Copia Percorso",
-  "copy_paths": "Copia Percorsi",
-  "copy_name": "Copia Nome",
-  "copy_names": "Copia Nomi"
+  "copy_path": "Copia percorso",
+  "copy_paths": "Copia percorsi",
+  "copy_name": "Copia nome",
+  "copy_names": "Copia nomi",
+  "copy_uri": "Copia URI",
+  "copy_uris": "Copia URI",
+  "copy_content": "Copia contenuto"
 }
