@@ -12,7 +12,7 @@
 ## Net Install
 
 ```bash
-curl -L https://raw.githubusercontent.com/chr314/nautilus-copy-path/master/net-installer.sh | sudo bash
+curl -L https://raw.githubusercontent.com/chr314/nautilus-copy-path/master/net-installer.sh | bash
 ```
 
 ## Manual installation
