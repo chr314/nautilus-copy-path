@@ -4,5 +4,6 @@
   "copy_name": "Name kopieren",
   "copy_names": "Namen kopieren",
   "copy_uri": "URI kopieren",
-  "copy_uris": "URIs kopieren"
+  "copy_uris": "URIs kopieren",
+  "copy_content": "Inhalt kopieren"
 }

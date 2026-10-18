@@ -94,6 +94,12 @@ example:
 }
 ```
 
+Set `language` to `"auto"` to use the system message language. The extension checks
+`LANGUAGE`, then the effective locale (`LC_ALL`, `LC_MESSAGES`, or `LANG`), and maps
+locale variants such as `de_AT.UTF-8` to the available base language (`de`). A `C` or
+`POSIX` message locale, or a locale without a matching translation, uses English. Set
+a language code such as `"de"` to override automatic selection.
+
 ## Currently supported languages
 
 - Arabic
