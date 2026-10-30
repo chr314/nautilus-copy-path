@@ -106,6 +106,7 @@ example:
 - Greek
 - Italian
 - Japanese
+- Korean
 - Norwegian
 - Polish
 - Portuguese
